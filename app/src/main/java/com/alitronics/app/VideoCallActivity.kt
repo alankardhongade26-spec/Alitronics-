@@ -16,6 +16,11 @@ import androidx.core.content.ContextCompat
 class VideoCallActivity : AppCompatActivity() {
 
     private lateinit var previewView: PreviewView
+    private var cameraProvider: ProcessCameraProvider? = null
+    private var camera: androidx.camera.core.Camera? = null
+
+    private var micEnabled = true
+    private var cameraEnabled = true
 
     companion object {
         private const val PERMISSION_REQUEST_CODE = 100
@@ -32,14 +37,33 @@ class VideoCallActivity : AppCompatActivity() {
         val endCallButton = findViewById<Button>(R.id.endCallButton)
 
         micButton.setOnClickListener {
-            Toast.makeText(this, "Microphone button pressed", Toast.LENGTH_SHORT).show()
+            micEnabled = !micEnabled
+
+            if (micEnabled) {
+                micButton.text = "🎙 Mic ON"
+                Toast.makeText(this, "Microphone ON", Toast.LENGTH_SHORT).show()
+            } else {
+                micButton.text = "🔇 Mic OFF"
+                Toast.makeText(this, "Microphone OFF", Toast.LENGTH_SHORT).show()
+            }
         }
 
         cameraButton.setOnClickListener {
-            Toast.makeText(this, "Camera button pressed", Toast.LENGTH_SHORT).show()
+            cameraEnabled = !cameraEnabled
+
+            if (cameraEnabled) {
+                cameraButton.text = "📷 Camera ON"
+                previewView.visibility = android.view.View.VISIBLE
+                Toast.makeText(this, "Camera ON", Toast.LENGTH_SHORT).show()
+            } else {
+                cameraButton.text = "📷 Camera OFF"
+                previewView.visibility = android.view.View.INVISIBLE
+                Toast.makeText(this, "Camera OFF", Toast.LENGTH_SHORT).show()
+            }
         }
 
         endCallButton.setOnClickListener {
+            cameraProvider?.unbindAll()
             finish()
         }
 
@@ -108,7 +132,7 @@ class VideoCallActivity : AppCompatActivity() {
 
         cameraProviderFuture.addListener({
 
-            val cameraProvider = cameraProviderFuture.get()
+            cameraProvider = cameraProviderFuture.get()
 
             val preview = Preview.Builder().build()
 
@@ -121,9 +145,9 @@ class VideoCallActivity : AppCompatActivity() {
 
             try {
 
-                cameraProvider.unbindAll()
+                cameraProvider?.unbindAll()
 
-                cameraProvider.bindToLifecycle(
+                camera = cameraProvider?.bindToLifecycle(
                     this,
                     cameraSelector,
                     preview
@@ -140,4 +164,9 @@ class VideoCallActivity : AppCompatActivity() {
 
         }, ContextCompat.getMainExecutor(this))
     }
-}
+
+    override fun onDestroy() {
+        cameraProvider?.unbindAll()
+        super.onDestroy()
+    }
+}                
