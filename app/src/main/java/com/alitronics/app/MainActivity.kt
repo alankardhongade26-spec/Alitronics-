@@ -35,11 +35,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         videoButton.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Starting Alitronics video call...",
-                Toast.LENGTH_SHORT
-            ).show()
+    val intent = android.content.Intent(this, VideoCallActivity::class.java)
+    startActivity(intent)
         }
     }
 }
