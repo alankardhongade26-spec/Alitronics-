@@ -20,7 +20,11 @@ class MainActivity : AppCompatActivity() {
             val name = nameInput.text.toString().trim()
 
             if (name.isEmpty()) {
-                Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Please enter your name",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 Toast.makeText(
                     this,
@@ -33,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         videoButton.setOnClickListener {
             Toast.makeText(
                 this,
-                "Video calling will be added next",
+                "Starting Alitronics video call...",
                 Toast.LENGTH_SHORT
             ).show()
         }
